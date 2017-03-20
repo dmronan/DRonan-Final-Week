@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -11,7 +12,7 @@
         <!--PageVC-->
         <scene sceneID="ZqS-uS-uJ8">
             <objects>
-                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="pageCurl" navigationOrientation="horizontal" spineLocation="min" id="xW5-XJ-J8T" customClass="PageVC" customModule="Weather_Gift" customModuleProvider="target" sceneMemberID="viewController"/>
+                <pageViewController autoresizesArchivedViewToFullSize="NO" title="PageVC" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="min" id="xW5-XJ-J8T" customClass="PageVC" customModule="Weather_Gift" customModuleProvider="target" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uue-sc-VFE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="149" y="-557"/>
@@ -19,7 +20,7 @@
         <!--DetailVC-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="DetailVC" customModule="Weather_Gift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DetailVC" title="DetailVC" id="BYZ-38-t0r" customClass="DetailVC" customModule="Weather_Gift" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -70,10 +71,17 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
+                    <connections>
+                        <outlet property="currentImage" destination="3hH-pT-xEk" id="dSZ-vp-q3Z"/>
+                        <outlet property="dateLabel" destination="B8m-oh-be3" id="mTd-TT-ecl"/>
+                        <outlet property="locationLabel" destination="i1c-tG-4Ap" id="N7g-Fk-0nS"/>
+                        <outlet property="summaryLabel" destination="nu7-l5-HvP" id="tPV-1A-iBr"/>
+                        <outlet property="temperatureLabel" destination="Cre-1u-A8J" id="7nc-QY-scZ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="133.59999999999999" y="112.89355322338831"/>
+            <point key="canvasLocation" x="149" y="191"/>
         </scene>
         <!--ListVC-->
         <scene sceneID="jnP-nC-LGA">
@@ -125,7 +133,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aBz-Du-QND" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="946" y="-557"/>
+            <point key="canvasLocation" x="860" y="-558"/>
         </scene>
     </scenes>
 </document>
