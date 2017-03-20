@@ -19,6 +19,7 @@ class DetailVC: UIViewController {
     var currentPage = 0
     var locationsArray = [String]()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
