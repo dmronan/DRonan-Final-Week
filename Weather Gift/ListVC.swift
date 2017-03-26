@@ -7,31 +7,25 @@
 //
 
 import UIKit
+import GooglePlaces
 
-class ListVC: UITableViewController {
-    
+class ListVC: UIViewController{
     
     @IBOutlet weak var editBarButton: UIBarButtonItem!
-    
     @IBOutlet weak var addBarButton: UIBarButtonItem!
     
     @IBOutlet weak var tableView: UITableView!
-
+    
     var locationsArray = [String]()
     var currentPage = 0
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.reloadData()
-
-        
     }
-    
-    
     //MARK:- Segues
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -42,8 +36,8 @@ class ListVC: UITableViewController {
             controller.locationsArray = locationsArray
         }
     }
-
-
+    
+    
     @IBAction func editButtonPressed(_ sender: UIBarButtonItem) {
         if tableView.isEditing == true {
             tableView.setEditing(false, animated: true)
@@ -56,11 +50,16 @@ class ListVC: UITableViewController {
         }
     }
     
-    
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        let autocompleteController = GMSAutocompleteViewController()
+        autocompleteController.delegate = self
+        present(autocompleteController, animated: true, completion: nil)
+    }
     
 }
 
 extension ListVC: UITableViewDataSource, UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return locationsArray.count
         
@@ -70,7 +69,6 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "LocationCell", for: indexPath)
         cell.textLabel?.text = locationsArray[indexPath.row]
         return cell
-        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -79,14 +77,14 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     
     //MARK:- TableView Editing Functions
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             locationsArray.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
-    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         
         let itemToMove = locationsArray[sourceIndexPath.row]
         locationsArray.remove(at: sourceIndexPath.row)
@@ -96,11 +94,12 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     
     //MARK:- Tableview Code to Freeze the First Cell - No deleting or moving
     
+    
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return (indexPath.row == 0 ? false : true )
     }
     
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if indexPath.row == 0 {
             return false
         } else {
@@ -108,7 +107,8 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         }
         
     }
-    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         if proposedDestinationIndexPath.row == 0 {
             return sourceIndexPath
         } else {
@@ -116,5 +116,41 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         }
         
     }
+    
+    func updateTable(placeName: String) {
+        locationsArray.append(placeName)
+        tableView.reloadData()
+    }
 }
 
+extension ListVC: GMSAutocompleteViewControllerDelegate {
+    
+    // Handle the user's selection.
+    func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+        print("Place name: \(place.name)")
+        print("Place address: \(place.formattedAddress)")
+        print("Place attributions: \(place.attributions)")
+        updateTable(placeName: place.name)
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+        // TODO: handle the error.
+        print("Error: ", error.localizedDescription)
+    }
+    
+    // User canceled the operation.
+    func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    // Turn the network activity indicator on and off again.
+    func didRequestAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+    }
+    
+    func didUpdateAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    }
+    
+}
