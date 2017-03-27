@@ -13,10 +13,9 @@ class ListVC: UIViewController{
     
     @IBOutlet weak var editBarButton: UIBarButtonItem!
     @IBOutlet weak var addBarButton: UIBarButtonItem!
-    
     @IBOutlet weak var tableView: UITableView!
     
-    var locationsArray = [String]()
+    var locationsArray = [WeatherLocation]()
     var currentPage = 0
     
     
@@ -67,7 +66,7 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "LocationCell", for: indexPath)
-        cell.textLabel?.text = locationsArray[indexPath.row]
+        cell.textLabel?.text = locationsArray[indexPath.row].name
         return cell
     }
     
@@ -117,8 +116,14 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         
     }
     
-    func updateTable(placeName: String) {
-        locationsArray.append(placeName)
+    func updateTable(placeName: GMSPlace) {
+        var newLocation = WeatherLocation()
+        newLocation.name = placeName.name
+        let lat = placeName.coordinate.latitude
+        let long = placeName.coordinate.longitude
+        newLocation.coordinates = "\(lat), \(long)"
+        print(newLocation.coordinates)
+        locationsArray.append(newLocation)
         tableView.reloadData()
     }
 }
@@ -127,11 +132,9 @@ extension ListVC: GMSAutocompleteViewControllerDelegate {
     
     // Handle the user's selection.
     func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
-        print("Place name: \(place.name)")
-        print("Place address: \(place.formattedAddress)")
-        print("Place attributions: \(place.attributions)")
-        updateTable(placeName: place.name)
         dismiss(animated: true, completion: nil)
+        
+        updateTable(placeName: place)
     }
     
     func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
