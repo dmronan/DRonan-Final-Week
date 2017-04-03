@@ -15,6 +15,9 @@ class WeatherLocation {
     var coordinates = ""
     var currentTemp = -999.9
     var dailySummary = ""
+    var currentIcon = ""
+    var currentTime = 0.0
+    var timeZone = ""
     
     func getWeather(completed: @escaping () -> ()) {
         
@@ -37,10 +40,29 @@ class WeatherLocation {
                 } else {
                     print("Could not return a summay!")
                 }
+                if let icon = json["currently"]["icon"].string {
+                    print("summary inside Weather = \(icon)")
+                    self.currentIcon = icon
+                } else {
+                    print("Could not return an icon!")
+                }
+                if let time = json["currently"]["time"].double {
+                    print("TIME inside get Weather = \(time)")
+                    self.currentTime = time
+                } else {
+                    print("Could not return a temperature!")
+                }
+                if let timeZone = json["timezone"].string {
+                    print("TIMEZONE inside get Weather = \(timeZone)")
+                    self.timeZone = timeZone
+                } else {
+                    print("Could not return a timezone!")
+                }
             case .failure(let error):
             print(error)
             
         }
+            print("****")
             completed()
     }
 }
