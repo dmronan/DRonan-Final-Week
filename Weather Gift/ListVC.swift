@@ -54,8 +54,17 @@ class ListVC: UIViewController{
         autocompleteController.delegate = self
         present(autocompleteController, animated: true, completion: nil)
     }
+ 
+    func saveUserDefaults() {
+        var locationsDefaultsArray = [WeatherUserDefault]()
+        locationsDefaultsArray = locationsArray
+        let locationsData = NSKeyedArchiver.archivedData(withRootObject: locationsDefaultsArray)
+        UserDefaults.standard.set(locationsData, forKey: "locationsData")
+        }
+        
+        
+    }
     
-}
 
 extension ListVC: UITableViewDataSource, UITableViewDelegate {
     
@@ -80,6 +89,7 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         if editingStyle == .delete {
             locationsArray.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
+            saveUserDefaults()
         }
     }
     
@@ -88,6 +98,7 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         let itemToMove = locationsArray[sourceIndexPath.row]
         locationsArray.remove(at: sourceIndexPath.row)
         locationsArray.insert(itemToMove, at: destinationIndexPath.row)
+        saveUserDefaults()
         
     }
     
@@ -117,7 +128,7 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func updateTable(placeName: GMSPlace) {
-        var newLocation = WeatherLocation()
+        let newLocation = WeatherLocation()
         newLocation.name = placeName.name
         let lat = placeName.coordinate.latitude
         let long = placeName.coordinate.longitude
@@ -125,6 +136,7 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
         print(newLocation.coordinates)
         locationsArray.append(newLocation)
         tableView.reloadData()
+        saveUserDefaults()
     }
 }
 
